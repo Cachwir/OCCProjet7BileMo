@@ -8,8 +8,9 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\User;
+use AppBundle\Entity\Product;
 use AppBundle\Exception\ResourceValidationException;
+use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\Post;
 use FOS\RestBundle\Controller\Annotations\QueryParam;
@@ -26,44 +27,44 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Nelmio\ApiDocBundle\Annotation as Doc;
 
-class ApiUserController extends FOSRestController
+class ApiProductController extends FOSRestController
 {
     /**
      * @Get(
-     *     path = "/users/{id}",
-     *     name = "api_user_show",
+     *     path = "/products/{id}",
+     *     name = "api_product_show",
      *     requirements = {"id"="\d+"}
      * )
      * @View(
      *     statusCode = 200,
      * )
-     * @ParamConverter("user")
+     * @ParamConverter("product")
      *
      * @Doc\ApiDoc(
      *     resource=true,
-     *     section="Users",
-     *     description="Returns one target user.",
+     *     section="Products",
+     *     description="Returns one target product.",
      *     requirements={
      *         {
      *             "name"="id",
      *             "dataType"="integer",
      *             "requirements"="\d+",
-     *             "description"="The user's unique identifier."
+     *             "description"="The product's unique identifier."
      *         }
      *     },
      *     statusCodes={
      *         200="Returned when ok",
-     *         404="Returned when the requested user doesn't exist",
+     *         404="Returned when the requested product doesn't exist",
      *     }
      * )
      */
-    public function showAction(User $user)
+    public function showAction(Product $product)
     {
-        return $user;
+        return $product;
     }
 
     /**
-     * @Get("/users", name="api_user_list")
+     * @Get("/products", name="api_product_list")
      * @QueryParam(
      *     name="keyword",
      *     requirements="[a-zA-Z0-9]",
@@ -98,8 +99,8 @@ class ApiUserController extends FOSRestController
      *
      * @Doc\ApiDoc(
      *     resource=true,
-     *     section="Users",
-     *     description="Returns a list of users, paginated and ordered by email.",
+     *     section="Products",
+     *     description="Returns a list of products, paginated and ordered by name.",
      *     statusCodes={
      *         200="Returned when ok",
      *         400="Returned when the parameters are not correct",
@@ -109,7 +110,7 @@ class ApiUserController extends FOSRestController
      */
     public function listAction(ParamFetcherInterface $paramFetcher)
     {
-        $pager = $this->getDoctrine()->getRepository('AppBundle:User')->search(
+        $pager = $this->getDoctrine()->getRepository('AppBundle:Product')->search(
             $paramFetcher->get('keyword'),
             $paramFetcher->get('order'),
             $paramFetcher->get('limit'),
@@ -119,10 +120,10 @@ class ApiUserController extends FOSRestController
         $paginatedRepresentation = new PaginatedRepresentation(
             new CollectionRepresentation(
                 $pager->getCurrentPageResults(),
-                'users', // embedded rel
-                'users'  // xml element name
+                'products', // embedded rel
+                'products'  // xml element name
             ),
-            'api_user_list', // route
+            'api_product_list', // route
             array(), // route parameters
             $pager->getCurrentPage(),       // page number
             $pager->getMaxPerPage(),      // limit
@@ -134,83 +135,5 @@ class ApiUserController extends FOSRestController
         );
 
         return $paginatedRepresentation;
-    }
-
-    /**
-     * @Post(
-     *     path = "/users/add",
-     *     name = "api_user_add"
-     * )
-     * @View(
-     *     statusCode = 201,
-     * )
-     * @ParamConverter(
-     *     "user",
-     *     converter="fos_rest.request_body",
-     * )
-     *
-     * @Doc\ApiDoc(
-     *     resource=true,
-     *     section="Users",
-     *     description="Creates a user.",
-     *     requirements={
-     *         {
-     *             "name"="email",
-     *             "dataType"="string",
-     *             "description"="The user's unique email."
-     *         },
-     *         {
-     *             "name"="plain_password",
-     *             "dataType"="string",
-     *             "description"="The user's unhashed password."
-     *         },
-     *         {
-     *             "name"="firstname",
-     *             "dataType"="string",
-     *             "description"="The user's first name."
-     *         },
-     *         {
-     *             "name"="lastname",
-     *             "dataType"="string",
-     *             "description"="The user's last name."
-     *         },
-     *         {
-     *             "name"="telephone",
-     *             "dataType"="string",
-     *             "description"="The user's phone number (optionnal)."
-     *         },
-     *         {
-     *             "name"="address",
-     *             "dataType"="string",
-     *             "description"="The user's full address (optionnal)."
-     *         },
-     *     },
-     *     statusCodes={
-     *         201="Returned when created",
-     *         400="Returned when a violation is raised by validation"
-     *     }
-     * )
-     */
-    public function addAction(User $user, ConstraintViolationListInterface $violations)
-    {
-        if (count($violations)) {
-            $message = 'The JSON sent contains invalid data. Here are the errors you need to correct: ';
-            $i = 0;
-            foreach ($violations as $violation) {
-                if ($i !== 0) {
-                    $message .= " / ";
-                }
-                $message .= sprintf("Field %s: %s", $violation->getPropertyPath(), $violation->getMessage());
-                $i++;
-            }
-
-            throw new ResourceValidationException($message);
-        }
-
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($user);
-        $em->flush();
-
-        return $this->view($user, Response::HTTP_CREATED, ['Location' => $this->generateUrl('api_user_show', ['id' => $user->getId(), UrlGeneratorInterface::ABSOLUTE_URL])]);
     }
 }

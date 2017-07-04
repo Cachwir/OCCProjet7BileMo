@@ -9,3 +9,7 @@ api:
 api_user:
     resource: "@AppBundle/Controller/ApiUserController.php"
     type:     annotation
+
+api_product:
+    resource: "@AppBundle/Controller/ApiProductController.php"
+    type:     annotation

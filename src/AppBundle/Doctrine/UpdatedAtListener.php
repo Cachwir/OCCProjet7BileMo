@@ -32,7 +32,7 @@ class UpdatedAtListener implements EventSubscriber
     public function preUpdate(LifecycleEventArgs $args)
     {
         $entity = $args->getEntity();
-        if (!$entity instanceof User) {
+        if (!method_exists($entity, "setUpdatedAtNow")) {
             return;
         }
         $entity->setUpdatedAtNow();
