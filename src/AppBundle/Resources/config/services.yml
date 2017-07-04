@@ -1,3 +1,14 @@
 # Learn more about services, parameters and containers at
 # http://symfony.com/doc/current/book/service_container.html
 services:
+    # Doctrine listeners
+    app.doctrine.hash_password_listener:
+        class: AppBundle\Doctrine\HashPasswordListener
+        autowire: true
+        tags:
+            - { name: doctrine.event_subscriber }
+
+    app.doctrine.updated_at_listener:
+        class: AppBundle\Doctrine\UpdatedAtListener
+        tags:
+            - { name: doctrine.event_subscriber }
