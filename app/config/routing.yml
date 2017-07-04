@@ -5,3 +5,7 @@ NelmioApiDocBundle:
 api:
     resource: "@AppBundle/Controller/ApiHomeController.php"
     type:     annotation
+
+api_user:
+    resource: "@AppBundle/Controller/ApiUserController.php"
+    type:     annotation
