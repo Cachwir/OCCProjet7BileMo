@@ -1,0 +1,58 @@
+AppBundle\Entity\User:
+  user_{1..5}:
+    email: test<current()>@gmx.com
+    plainPassword: password
+    firstname: John
+    lastname: Doe
+    telephone: +33285794636
+    address: 5 avenue de la Résistance, 13000 Marseille
+
+AppBundle\Entity\Product:
+  product_{1..50}:
+    name: product_<current()>
+    brand: LG
+    price: 99.99
+    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eget auctor nulla. Integer enim dui, cursus non placerat eget, commodo at odio. Donec aliquet mauris eu justo convallis, sed maximus ipsum varius. Phasellus dapibus blandit felis, et euismod lorem scelerisque at. Morbi consequat sapien in lobortis varius. Curabitur bibendum ante quis pharetra interdum. Interdum et malesuada fames ac ante ipsum primis in faucibus. Sed ullamcorper viverra urna vitae facilisis. Fusce in pellentesque urna. Curabitur ut sollicitudin elit. Sed egestas ultricies elit at suscipit. Phasellus sagittis rhoncus accumsan. Phasellus iaculis neque quis libero auctor molestie. Nullam metus ligula, consequat quis ultrices nec, facilisis et tortor. Quisque lorem eros, dapibus malesuada quam quis, lacinia consectetur sem."
+    advantages:
+      - 1.3 megapixels camera
+      - 13 hours of autonomy in communication
+      - lightweight (85g)
+    caracteristics:
+      general:
+        type: smartphone
+        colors: black, white, red, pink
+        sim type: SIM
+        number of sims: 2
+        battery: Li-ion 950 mAh
+        autonomy while communicating: 13 hours
+        processor: "Mediatek MT6260 : up to 360 MHz"
+        os: android
+      memory:
+        ram: 8 Mo
+        extension: Micro SD
+        max memory card capacity: 16 Go
+        internal memory: 10 Mo
+      screen:
+        dimensions: 3" (7.6 cm)
+        resolution: 240 x 320 pixels
+      communication and networks:
+        networks: 236.8 kbps
+      connectics:
+        micro usb: yes
+        jack 3.5 mm: yes
+        apple lightning: no
+        type-c usb: no
+      camera:
+        pictures: 1.3 megapixels
+        stabilizator: no
+      resistance:
+        water: no
+        norm: no
+        dust: no
+      dimensions:
+        l x h x p: 5.8 x 10.8 x 1.95 cm
+        mass: 85 g
+      informations and services:
+        guarantee: 2 years
+        disponibility of the pieces: 2 years
+    available: true
