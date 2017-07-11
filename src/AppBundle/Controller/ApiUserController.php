@@ -66,7 +66,7 @@ class ApiUserController extends FOSRestController
      * @Get("/users", name="api_user_list")
      * @QueryParam(
      *     name="keyword",
-     *     requirements="[a-zA-Z0-9]",
+     *     requirements="[a-zA-Z0-9]+",
      *     nullable=true,
      *     strict=true,
      *     description="The keyword to search for."

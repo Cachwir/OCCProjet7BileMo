@@ -67,7 +67,7 @@ class ApiProductController extends FOSRestController
      * @Get("/products", name="api_product_list")
      * @QueryParam(
      *     name="keyword",
-     *     requirements="[a-zA-Z0-9]",
+     *     requirements="[a-zA-Z0-9]+",
      *     nullable=true,
      *     strict=true,
      *     description="The keyword to search for."
