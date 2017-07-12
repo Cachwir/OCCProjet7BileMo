@@ -6,6 +6,13 @@ api:
     resource: "@AppBundle/Controller/ApiHomeController.php"
     type:     annotation
 
+api_login_check:
+    path: /api/login_check
+
+api_customer:
+    resource: "@AppBundle/Controller/ApiCustomerController.php"
+    type:     annotation
+
 api_user:
     resource: "@AppBundle/Controller/ApiUserController.php"
     type:     annotation

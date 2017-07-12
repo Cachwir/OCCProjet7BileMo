@@ -8,9 +8,8 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\User;
+use AppBundle\Entity\Customer;
 use AppBundle\Exception\ResourceValidationException;
-use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\Post;
 use FOS\RestBundle\Controller\Annotations\QueryParam;
@@ -21,54 +20,51 @@ use FOS\RestBundle\Request\ParamFetcherInterface;
 use Hateoas\Representation\CollectionRepresentation;
 use Hateoas\Representation\PaginatedRepresentation;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Nelmio\ApiDocBundle\Annotation as Doc;
 
-class ApiUserController extends FOSRestController
+class ApiCustomerController extends FOSRestController
 {
     /**
      * @Get(
-     *     path = "/api/users/{id}",
-     *     name = "api_user_show",
+     *     path = "/api/customers/{id}",
+     *     name = "api_customer_show",
      *     requirements = {"id"="\d+"}
      * )
      * @View(
      *     statusCode = 200,
      * )
-     * @ParamConverter("user")
-     *
-     * @Security("has_role('ROLE_ADMIN')")
+     * @ParamConverter("customer")
      *
      * @Doc\ApiDoc(
      *     resource=true,
-     *     section="Users",
-     *     description="ADMIN - Returns one target user.",
+     *     section="Customers",
+     *     description="Returns one target customer.",
      *     requirements={
      *         {
      *             "name"="id",
      *             "dataType"="integer",
      *             "requirements"="\d+",
-     *             "description"="The user's unique identifier."
+     *             "description"="The customer's unique identifier."
      *         }
      *     },
      *     statusCodes={
      *         200="Returned when ok",
      *         401="No token was provided or the token is invalid",
-     *         404="Returned when the requested user doesn't exist",
+     *         404="Returned when the requested customer doesn't exist",
      *     }
      * )
      */
-    public function showAction(User $user)
+    public function showAction(Customer $customer)
     {
-        return $user;
+        return $customer;
     }
 
     /**
-     * @Get("/api/users", name="api_user_list")
+     * @Get("/api/customers", name="api_customer_list")
      * @QueryParam(
      *     name="keyword",
      *     requirements="[a-zA-Z0-9]+",
@@ -101,12 +97,10 @@ class ApiUserController extends FOSRestController
      *     statusCode = 200,
      * )
      *
-     * @Security("has_role('ROLE_ADMIN')")
-     *
      * @Doc\ApiDoc(
      *     resource=true,
-     *     section="Users",
-     *     description="ADMIN - Returns a list of users, paginated and ordered by email.",
+     *     section="Customers",
+     *     description="Returns a list of customers, paginated and ordered by email.",
      *     statusCodes={
      *         200="Returned when ok",
      *         400="Returned when the parameters are not correct",
@@ -117,7 +111,7 @@ class ApiUserController extends FOSRestController
      */
     public function listAction(ParamFetcherInterface $paramFetcher)
     {
-        $pager = $this->getDoctrine()->getRepository('AppBundle:User')->search(
+        $pager = $this->getDoctrine()->getRepository('AppBundle:Customer')->search(
             $paramFetcher->get('keyword'),
             $paramFetcher->get('order'),
             $paramFetcher->get('limit'),
@@ -127,10 +121,10 @@ class ApiUserController extends FOSRestController
         $paginatedRepresentation = new PaginatedRepresentation(
             new CollectionRepresentation(
                 $pager->getCurrentPageResults(),
-                'users', // embedded rel
-                'users'  // xml element name
+                'customers', // embedded rel
+                'customers'  // xml element name
             ),
-            'api_user_list', // route
+            'api_customer_list', // route
             array(), // route parameters
             $pager->getCurrentPage(),       // page number
             $pager->getMaxPerPage(),      // limit
@@ -146,53 +140,51 @@ class ApiUserController extends FOSRestController
 
     /**
      * @Post(
-     *     path = "/api/users/add",
-     *     name = "api_user_add"
+     *     path = "/api/customers/add",
+     *     name = "api_customer_add"
      * )
      * @View(
      *     statusCode = 201,
      * )
      * @ParamConverter(
-     *     "user",
+     *     "customer",
      *     converter="fos_rest.request_body",
      * )
      *
-     * @Security("has_role('ROLE_ADMIN')")
-     *
      * @Doc\ApiDoc(
      *     resource=true,
-     *     section="Users",
-     *     description="ADMIN - Creates a user. Be careful when specifying the role. If ROLE_ADMIN is chosen, the user will be able to see, add and delete users.",
+     *     section="Customers",
+     *     description="Creates a customer.",
      *     requirements={
      *         {
-     *             "name"="username",
+     *             "name"="email",
      *             "dataType"="string",
-     *             "description"="The user's unique username."
+     *             "description"="The customer's unique email."
      *         },
      *         {
      *             "name"="plain_password",
      *             "dataType"="string",
-     *             "description"="The user's unhashed password."
-     *         },
-     *         {
-     *             "name"="role",
-     *             "dataType"="string",
-     *             "description"="The user's role (ROLE_USER = user, ROLE_ADMIN = admin). Admins can view, add and delete users."
+     *             "description"="The customer's unhashed password."
      *         },
      *         {
      *             "name"="firstname",
      *             "dataType"="string",
-     *             "description"="The user's first name (optionnal)."
+     *             "description"="The customer's first name."
      *         },
      *         {
      *             "name"="lastname",
      *             "dataType"="string",
-     *             "description"="The user's last name (optionnal)."
+     *             "description"="The customer's last name."
      *         },
      *         {
-     *             "name"="comment",
+     *             "name"="telephone",
      *             "dataType"="string",
-     *             "description"="A comment to describe the user (optionnal)."
+     *             "description"="The customer's phone number (optionnal)."
+     *         },
+     *         {
+     *             "name"="address",
+     *             "dataType"="string",
+     *             "description"="The customer's full address (optionnal)."
      *         },
      *     },
      *     statusCodes={
@@ -202,7 +194,7 @@ class ApiUserController extends FOSRestController
      *     }
      * )
      */
-    public function addAction(User $user, ConstraintViolationListInterface $violations)
+    public function addAction(Customer $customer, ConstraintViolationListInterface $violations)
     {
         if (count($violations)) {
             $message = 'The JSON sent contains invalid data. Here are the errors you need to correct: ';
@@ -219,48 +211,9 @@ class ApiUserController extends FOSRestController
         }
 
         $em = $this->getDoctrine()->getManager();
-        $em->persist($user);
+        $em->persist($customer);
         $em->flush();
 
-        return $this->view($user, Response::HTTP_CREATED, ['Location' => $this->generateUrl('api_user_show', ['id' => $user->getId(), UrlGeneratorInterface::ABSOLUTE_URL])]);
-    }
-
-    /**
-     * @Get(
-     *     path = "/api/users/{id}/delete",
-     *     name = "api_user_delete",
-     *     requirements = {"id"="\d+"}
-     * )
-     * @View(
-     *     statusCode = 200,
-     * )
-     * @ParamConverter("user")
-     *
-     * @Security("has_role('ROLE_ADMIN')")
-     *
-     * @Doc\ApiDoc(
-     *     resource=true,
-     *     section="Users",
-     *     description="ADMIN - Deletes target user.",
-     *     requirements={
-     *         {
-     *             "name"="id",
-     *             "dataType"="integer",
-     *             "requirements"="\d+",
-     *             "description"="The user's unique identifier."
-     *         }
-     *     },
-     *     statusCodes={
-     *         200="Returned when deleted successfully",
-     *         401="No token was provided or the token is invalid",
-     *         404="Returned when the requested user doesn't exist",
-     *     }
-     * )
-     */
-    public function deleteAction(User $user)
-    {
-        $em = $this->get("doctrine.orm.entity_manager");
-        $em->remove($user);
-        $em->flush();
+        return $this->view($customer, Response::HTTP_CREATED, ['Location' => $this->generateUrl('api_customer_show', ['id' => $customer->getId(), UrlGeneratorInterface::ABSOLUTE_URL])]);
     }
 }

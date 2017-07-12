@@ -1,5 +1,14 @@
 AppBundle\Entity\User:
-  user_{1..5}:
+  user:
+    username: admin
+    plainPassword: password
+    role: ROLE_ADMIN
+    firstname: Lea
+    lastname: Doe
+    comment: The default user. Please delete it after making your own using the appropriate request (/api/users/add).
+
+AppBundle\Entity\Customer:
+  customer_{1..5}:
     email: test<current()>@gmx.com
     plainPassword: password
     firstname: John
