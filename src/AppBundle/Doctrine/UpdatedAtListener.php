@@ -8,7 +8,6 @@
 
 namespace AppBundle\Doctrine;
 
-use AppBundle\Entity\User;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
@@ -22,7 +21,7 @@ class UpdatedAtListener implements EventSubscriber
     public function prePersist(LifecycleEventArgs $args)
     {
         $entity = $args->getEntity();
-        if (!$entity instanceof User) {
+        if (!method_exists($entity, "setUpdatedAtNow")) {
             return;
         }
 

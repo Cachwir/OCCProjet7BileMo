@@ -7,23 +7,23 @@ use JMS\Serializer\Annotation\Expose;
 use JMS\Serializer\Annotation\SerializedName;
 use JMS\Serializer\Annotation\Type;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation as Serializer;
 use Hateoas\Configuration\Annotation as Hateoas;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="user")
- * @UniqueEntity(fields={"username"}, message="This username is already taken.")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\UserRepository")
+ * @ORM\Table(name="customer")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\CustomerRepository")
+ * @UniqueEntity(fields={"email"}, message="This email is already taken.")
  * @ExclusionPolicy("all")
  *
  * @Hateoas\Relation(
  *      "self",
  *      href = @Hateoas\Route(
- *          "api_user_show",
+ *          "api_customer_show",
  *          parameters = { "id" = "expr(object.getId())" },
  *          absolute = true
  *      )
@@ -32,7 +32,7 @@ use Hateoas\Configuration\Annotation as Hateoas;
  * @Hateoas\Relation(
  *      "list",
  *      href = @Hateoas\Route(
- *          "api_user_list",
+ *          "api_customer_list",
  *          absolute = true
  *      )
  * )
@@ -40,21 +40,12 @@ use Hateoas\Configuration\Annotation as Hateoas;
  * @Hateoas\Relation(
  *      "add",
  *      href = @Hateoas\Route(
- *          "api_user_add",
- *          absolute = true
- *      )
- * )
- *
- * @Hateoas\Relation(
- *      "delete",
- *      href = @Hateoas\Route(
- *          "api_user_delete",
- *          parameters = { "id" = "expr(object.getId())" },
+ *          "api_customer_add",
  *          absolute = true
  *      )
  * )
  */
-class User implements UserInterface
+class Customer implements UserInterface
 {
     /**
      * @ORM\Id
@@ -72,11 +63,14 @@ class User implements UserInterface
 
     /**
      * @Assert\NotBlank()
+     * @Assert\Email()
      * @ORM\Column(type="string", unique=true)
+     *
+     * @Serializer\Since("1.0")
      *
      * @Expose
      */
-    protected $username;
+    protected $email;
 
     /**
      * @ORM\Column(type="string")
@@ -102,17 +96,11 @@ class User implements UserInterface
      *
      * @Expose
      */
-    protected $role;
-
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     *
-     * @Expose
-     */
     protected $firstname;
 
     /**
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="string")
+     * @Assert\NotBlank()
      *
      * @Expose
      */
@@ -123,10 +111,14 @@ class User implements UserInterface
      *
      * @Expose
      */
-    protected $comment;
+    protected $telephone;
 
-    const ROLE_USER = "ROLE_USER";
-    const ROLE_ADMIN = "ROLE_ADMIN";
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     *
+     * @Expose
+     */
+    protected $address;
 
     /**
      * @return mixed
@@ -169,41 +161,17 @@ class User implements UserInterface
     /**
      * @return mixed
      */
-    public function getUsername()
+    public function getEmail()
     {
-        return $this->username;
+        return $this->email;
     }
 
     /**
-     * @param mixed $username
+     * @param mixed $email
      */
-    public function setUsername($username)
+    public function setEmail($email)
     {
-        $this->username = $username;
-    }
-
-    /**
-     * @return array
-     */
-    public function getRoles()
-    {
-        return [$this->role];
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getRole()
-    {
-        return $this->role;
-    }
-
-    /**
-     * @param mixed $role
-     */
-    public function setRole($role)
-    {
-        $this->role = $role;
+        $this->email = $email;
     }
 
     /**
@@ -236,11 +204,6 @@ class User implements UserInterface
     public function setPlainPassword(string $plainPassword)
     {
         $this->plainPassword = $plainPassword;
-    }
-
-    public function getSalt()
-    {
-        // bcrypt used so a salt is not needed
     }
 
     public function eraseCredentials()
@@ -283,16 +246,49 @@ class User implements UserInterface
     /**
      * @return mixed
      */
-    public function getComment()
+    public function getTelephone()
     {
-        return $this->comment;
+        return $this->telephone;
     }
 
     /**
-     * @param mixed $comment
+     * @param mixed $telephone
      */
-    public function setComment($comment)
+    public function setTelephone($telephone)
     {
-        $this->comment = $comment;
+        $this->telephone = $telephone;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getAddress()
+    {
+        return $this->address;
+    }
+
+    /**
+     * @param mixed $address
+     */
+    public function setAddress($address)
+    {
+        $this->address = $address;
+    }
+
+    public function getRoles()
+    {
+        return [];
+    }
+
+    public function getSalt()
+    {
+        // nope
+    }
+
+    public function getUsername()
+    {
+        return $this->getEmail();
+    }
+
+
 }

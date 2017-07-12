@@ -31,7 +31,7 @@ class ApiProductController extends FOSRestController
 {
     /**
      * @Get(
-     *     path = "/products/{id}",
+     *     path = "/api/products/{id}",
      *     name = "api_product_show",
      *     requirements = {"id"="\d+"}
      * )
@@ -54,6 +54,7 @@ class ApiProductController extends FOSRestController
      *     },
      *     statusCodes={
      *         200="Returned when ok",
+     *         401="No token was provided or the token is invalid",
      *         404="Returned when the requested product doesn't exist",
      *     }
      * )
@@ -64,7 +65,7 @@ class ApiProductController extends FOSRestController
     }
 
     /**
-     * @Get("/products", name="api_product_list")
+     * @Get("/api/products", name="api_product_list")
      * @QueryParam(
      *     name="keyword",
      *     requirements="[a-zA-Z0-9]+",
@@ -104,6 +105,7 @@ class ApiProductController extends FOSRestController
      *     statusCodes={
      *         200="Returned when ok",
      *         400="Returned when the parameters are not correct",
+     *         401="No token was provided or the token is invalid",
      *         404="Returned when the requested page doesn't exist",
      *     }
      * )

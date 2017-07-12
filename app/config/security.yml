@@ -4,15 +4,26 @@ security:
 
     encoders:
         AppBundle\Entity\User: bcrypt
+        AppBundle\Entity\Customer: bcrypt
 
     # https://symfony.com/doc/current/security.html#b-configuring-how-users-are-loaded
     providers:
-        in_memory:
-            memory: ~
         user:
             entity:
                 class: AppBundle:User
-                property: email
+                property: username
+        in_memory:
+            memory: ~
+
+    role_hierarchy:
+        ROLE_ADMIN: [ROLE_USER]
+
+    access_control:
+        - { path: ^/$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/doc, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/*, roles: IS_AUTHENTICATED_FULLY }
 
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
@@ -23,6 +34,31 @@ security:
         api_doc:
             pattern: ^/api/doc
             security: false
+
+        login:
+            pattern:   ^/api/login
+            stateless: true
+            anonymous: true
+            form_login:
+                check_path:               /api/login_check
+                success_handler:          lexik_jwt_authentication.handler.authentication_success
+                failure_handler:          lexik_jwt_authentication.handler.authentication_failure
+                require_previous_session: false
+
+        home:
+            pattern: ^/$
+            security: false
+
+        api_home:
+            pattern: ^/api$
+            security: false
+
+        api:
+            pattern:   ^/api/*
+            stateless: true
+            guard:
+                authenticators:
+                    - lexik_jwt_authentication.jwt_token_authenticator
 
         main:
             anonymous: ~
