@@ -2,6 +2,10 @@ NelmioApiDocBundle:
     resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
     prefix:   /api/doc
 
+home:
+    resource: "@AppBundle/Controller/HomeController.php"
+    type:     annotation
+
 api:
     resource: "@AppBundle/Controller/ApiHomeController.php"
     type:     annotation
