@@ -11,7 +11,7 @@ namespace AppBundle\Tests\Controller;
 use AppBundle\Entity\Product;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class ApiProductControllerTest extends WebTestCase
+class ApiProductControllerTest extends BasicControllerTest
 {
     public function testShow()
     {
@@ -23,7 +23,9 @@ class ApiProductControllerTest extends WebTestCase
             throw new \Error("At least one product needs to be created in order to conduct these tests.");
         }
 
-        $crawler = $client->request('GET', '/products/'. $product->getId());
+        $crawler = $client->request('GET', '/api/products/'. $product->getId(), [], array(), [
+            "HTTP_AUTHORIZATION" => "Bearer ". $this->getTestApiToken(),
+        ]);
 
         $this->assertTrue($client->getResponse()->isSuccessful(), $client->getResponse()->getContent());
     }
@@ -32,11 +34,13 @@ class ApiProductControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $crawler = $client->request('GET', '/products', [
+        $crawler = $client->request('GET', '/api/products', [
             "keyword" => "product",
             "order" => "desc",
             "limit" => "5",
             "page" => "1",
+        ], array(), [
+            "HTTP_AUTHORIZATION" => "Bearer ". $this->getTestApiToken(),
         ]);
 
         $this->assertTrue($client->getResponse()->isSuccessful(), $client->getResponse()->getContent());
