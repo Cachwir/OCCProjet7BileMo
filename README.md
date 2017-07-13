@@ -14,6 +14,10 @@ Author: Cachwir
 - run composer install to install the dependancies
 - follow this guide for permissions depending on your os : http://symfony.com/doc/current/setup/file_permissions.html (add some add some chmod -R 777) to the following folders :
    - var
+- mkdir var/jwt
+- generate the jwt public and private keys using the following commands (source : https://github.com/lexik/LexikJWTAuthenticationBundle/blob/master/Resources/doc/3-functional-testing.md) :
+    - openssl genrsa -out var/jwt/private.pem -aes256 4096
+    - openssl rsa -pubout -in var/jwt/private.pem -out var/jwt/public.pem
 - cd app/config and copy parameters.yml.dist to parameters.yml
 - feel parameters.yml with your own config. Basically, you just need to fill the database part.
 - create your database using ./bin/console doctrine:schema:create
