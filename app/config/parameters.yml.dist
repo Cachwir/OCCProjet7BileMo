@@ -22,3 +22,6 @@ parameters:
     jwt_public_key_path:  '%kernel.root_dir%/../var/jwt/public.pem'  # ssh public key path
     jwt_key_pass_phrase:  'ilovecookies'                             # ssh key pass phrase
     jwt_token_ttl:        3600                                       # 30 minutes (default)
+
+    user_test.username: tester
+    user_test.password: $apr1$bix7mPZD$eFwCdW9REQj9krOCzk/t7.

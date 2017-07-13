@@ -12,7 +12,3 @@ services:
         class: AppBundle\Doctrine\UpdatedAtListener
         tags:
             - { name: doctrine.event_subscriber }
-
-    app.security.jwthandler:
-        class: AppBundle\Security\JwtHandler
-        arguments: ["%secret%"]

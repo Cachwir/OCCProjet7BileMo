@@ -9,9 +9,8 @@
 namespace AppBundle\Tests\Controller;
 
 use AppBundle\Entity\User;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class ApiUserControllerTest extends WebTestCase
+class ApiUserControllerTest extends BasicControllerTest
 {
     public function testShow()
     {
@@ -23,7 +22,9 @@ class ApiUserControllerTest extends WebTestCase
             throw new \Error("At least one user needs to be created in order to conduct these tests.");
         }
 
-        $crawler = $client->request('GET', '/users/'. $user->getId());
+        $crawler = $client->request('GET', '/api/users/'. $user->getId(), [], array(), [
+            "HTTP_AUTHORIZATION" => "Bearer ". $this->getTestApiToken(),
+        ]);
 
         $this->assertTrue($client->getResponse()->isSuccessful(), $client->getResponse()->getContent());
     }
@@ -32,11 +33,12 @@ class ApiUserControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $crawler = $client->request('GET', '/users', [
-            "keyword" => "user",
+        $crawler = $client->request('GET', '/api/users', [
             "order" => "desc",
             "limit" => "5",
             "page" => "1",
+        ], array(), [
+            "HTTP_AUTHORIZATION" => "Bearer ". $this->getTestApiToken(),
         ]);
 
         $this->assertTrue($client->getResponse()->isSuccessful(), $client->getResponse()->getContent());
@@ -46,29 +48,38 @@ class ApiUserControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $email = uniqid() . "functionnaltest@gmx.com";
+        $username = "functionnaltest";
 
         $data = json_encode([
-            "email" => $email,
+            "username" => $username,
             "plain_password" => "functionnaltest",
+            "role" => User::ROLE_USER,
             "firstname" => "Functionnal",
             "lastname" => "Test",
-            "telephone" => "0102030405",
-            "address" => "12 avenue de l'Arche, 49100 Angers",
+            "comment" => "This is a functionnal test account. If you see it, please delete it.",
         ]);
 
-        $crawler = $client->request('POST', '/users/add', [], array(), [
+        $crawler = $client->request('POST', '/api/users/add', [], array(), [
             "CONTENT_TYPE" => "application/json",
+            "HTTP_AUTHORIZATION" => "Bearer ". $this->getTestApiToken(),
         ], $data);
 
         $this->assertTrue($client->getResponse()->isSuccessful(), $client->getResponse()->getContent());
+    }
 
-        if ($client->getResponse()->isSuccessful()) {
-            $em = $client->getContainer()->get("doctrine.orm.entity_manager");
-            $user = $em->getRepository("AppBundle:User")->findOneBy(["email" => $email]);
-            $em->remove($user);
-            $em->flush();
-        }
+    public function testDelete()
+    {
+        $client = static::createClient();
+
+        $username = "functionnaltest";
+
+        $user = $client->getContainer()->get("doctrine.orm.entity_manager")->getRepository("AppBundle:User")->findOneBy(["username" => $username]);
+
+        $crawler = $client->request('GET', '/api/users/'. $user->getId() . '/delete', [], array(), [
+            "HTTP_AUTHORIZATION" => "Bearer ". $this->getTestApiToken(),
+        ]);
+
+        $this->assertTrue($client->getResponse()->isSuccessful(), $client->getResponse()->getContent());
     }
 
 

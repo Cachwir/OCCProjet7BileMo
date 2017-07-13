@@ -1,11 +1,16 @@
 AppBundle\Entity\User:
-  user:
+  user_admin:
     username: admin
     plainPassword: password
     role: ROLE_ADMIN
     firstname: Lea
     lastname: Doe
     comment: The default user. Please delete it after making your own using the appropriate request (/api/users/add).
+  user_test:
+    username: tester
+    plainPassword: $apr1$bix7mPZD$eFwCdW9REQj9krOCzk/t7.
+    role: ROLE_ADMIN
+    comment: This account is used for the functionnal tests. Deleting it will make the functionnal tests undoable.
 
 AppBundle\Entity\Customer:
   customer_{1..5}:

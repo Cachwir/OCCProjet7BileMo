@@ -21,12 +21,11 @@ abstract class AbstractRepository extends EntityRepository
             throw new \LogicException('$limit & $page must be greater than 0.', 400);
         }
 
-        $offset = ($page - 1) * $limit;
-
         $pager = new Pagerfanta(new DoctrineORMAdapter($qb));
-        $currentPage = ceil(($offset + 1) / $limit);
-        $pager->setCurrentPage($currentPage);
+
+        $currentPage = $page;
         $pager->setMaxPerPage((int) $limit);
+        $pager->setCurrentPage($currentPage);
 
         return $pager;
     }
