@@ -35,7 +35,6 @@ class CustomerRepositoryTest extends BasicRepositoryTest
 
             $customers[] = $customer;
         }
-
         return $customers;
     }
 
